@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="name_method">
+        <item name="date_and_time">Date and Time</item>
+        <item name="incremental">Incremental</item>
+    </string-array>
+
+    <string-array name="name_method_values">
+        <item name="date_and_time">date_and_time</item>
+        <item name="incremental">incremental</item>
+    </string-array>
+
+</resources>

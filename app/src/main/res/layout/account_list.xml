@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:paddingBottom="20dp"
+    android:focusable="false"
+    android:baselineAligned="false"
+    android:background="@android:drawable/dialog_holo_light_frame"
+    android:measureWithLargestChild="false">
+
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/account_isLoaded"
+        android:src="@drawable/ic_check_black_24dp"
+        android:visibility="invisible"
+        android:layout_gravity="bottom|right"/>
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/account_isInvalid"
+        android:src="@drawable/ic_error_outline_black_24dp"
+        android:visibility="invisible"
+        android:layout_gravity="bottom|right"/>
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:id="@+id/account_isFolder"
+        android:src="@drawable/ic_folder_black_24dp"
+        android:visibility="invisible"
+        android:layout_gravity="bottom|right"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:measureWithLargestChild="true"
+        android:layout_gravity="left|top"
+        >
+
+        <TextView android:id="@+id/account_name"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="center_vertical"
+                  android:textStyle="bold"
+                  android:text="Account Name Can Be Pretty Long"
+                  android:textSize="22sp"
+                  android:textColor="#000000"
+                  android:layout_marginTop="5dp"
+                  android:layout_marginBottom="5dp"
+                  android:singleLine="true"
+                  android:background="@android:color/transparent"
+                  android:paddingLeft="5dp"
+                  android:paddingRight="5dp"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Last Loaded"
+            android:id="@+id/account_info"
+            android:enabled="false"
+            android:textColor="#ff000000"
+            android:background="@android:color/transparent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

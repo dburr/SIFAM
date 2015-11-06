@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="General"
+        android:key="general">
+
+        <CheckBoxPreference
+            android:key="remember_folder"
+            android:summary="Reopen application to last selected folder."
+            android:title="Persistent Folder View"
+            android:defaultValue="true"
+            />
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Saving"
+        android:key="saving">
+        <CheckBoxPreference
+            android:key="quick_save"
+            android:summary="Save without asking for name"
+            android:title="Quick Save"
+            android:defaultValue="false"
+            />
+
+        <ListPreference
+            android:key="auto_name"
+            android:title="Auto Name Method"
+            android:summary="How to name saves when no name is given (Including Quick Save)"
+            android:defaultValue="date_and_time"
+            android:entries="@array/name_method"
+            android:entryValues="@array/name_method_values"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Loading"
+        android:key="loading">
+
+        <CheckBoxPreference
+            android:key="auto_start"
+            android:summary="Start School Idol Festival automatically after loading.\nTaping an already loaded save will start the game."
+            android:title="Auto Start SIF"
+            android:defaultValue="true"
+            />
+
+        </PreferenceCategory>
+
+
+
+    <PreferenceCategory
+        android:title="Debug"
+        android:key="debug">
+
+        <CheckBoxPreference
+            android:key="debug_allowDuplicateSaves"
+            android:summary="Disable checks for duplicate saves"
+            android:title="Allow Duplicate Saves"
+            android:defaultValue="false"
+            />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
