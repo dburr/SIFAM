@@ -1,4 +1,4 @@
-package com.caraxian.sifam
+package com.caraxian.sifam;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
