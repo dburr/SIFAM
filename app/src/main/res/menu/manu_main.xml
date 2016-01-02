@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_save"
+        android:icon="@drawable/ic_save_white_24dp"
+        android:title="Save"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/menu_new"
+        android:icon="@drawable/ic_add_white_24dp"
+        android:title="New Account"
+        app:showAsAction="always"/>
+    <item android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        android:title="Search"
+        app:showAsAction="always"/>
+    <item android:id="@+id/menu_sort"
+        android:icon="@drawable/ic_sort_white_24dp"
+        android:title="Sort"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        android:title="Refresh"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_newFolder"
+        android:icon="@drawable/ic_create_new_folder_white_24dp"
+        android:title="New Folder"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_options"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings_white_24dp"
+        app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_import"
+        android:title="Import Accounts"
+        app:showAsAction="never"/>
+
+</menu>

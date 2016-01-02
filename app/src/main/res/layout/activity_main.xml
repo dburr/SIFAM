@@ -1,62 +1,169 @@
-<FrameLayout android:id="@+id/main"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:paddingBottom="@dimen/activity_vertical_margin"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context=".MainActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="1dp"
+    android:paddingTop="1dp"
+    tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/textView"
-        android:textColor="#ffff0000"
-        android:text="Please Wait"
-        android:layout_alignTop="@+id/accounts"
-        android:layout_centerHorizontal="true"
-        android:textSize="@dimen/abc_text_size_subhead_material"
-        android:layout_gravity="center_horizontal|top"/>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|top">
+        android:id="@+id/view_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|top"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal"
+        android:visibility="visible">
 
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
-            android:id="@+id/currentFolder"
-            android:layout_gravity="left|top"
-            android:visibility="gone"/>
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_search" />
 
-        <ListView
-            android:id="@+id/accounts"
-            android:layout_width="fill_parent"
+        <EditText
+            android:id="@+id/search_editText"
+            android:layout_width="1dip"
             android:layout_height="fill_parent"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            tools:listitem="@android:layout/simple_list_item_2"
-            android:layout_gravity="center_horizontal|top"
-            />
+            android:layout_weight="1"
+            android:backgroundTint="@android:color/white"
+            android:textColor="@android:color/white" />
+
+        <Switch
+            android:id="@+id/allFolders_Switch"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:textOff="This Folder"
+            android:textOn="All Folders" />
 
     </LinearLayout>
 
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Move Here"
-        android:id="@+id/moveHere"
-        android:layout_gravity="center_horizontal|bottom"
-        android:visibility="gone"/>
 
-</FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/folder_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current Folder"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/errorMessage_noEnabledServers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No Servers Enabled"
+                android:textAlignment="center"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/error"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Settings"
+                android:onClick="openSettings"
+                android:padding="5dp"/>
+
+        </LinearLayout>
+
+
+        <ListView
+            android:id="@+id/accountList"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_gravity="center_horizontal|top"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            tools:listitem="@android:layout/simple_list_item_2" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="gone"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/sifamVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:text="Version"
+            android:textColor="@color/colorAccent"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/moveHere_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:onClick="confirmMove"
+            android:text="Move Here"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/cancelMove_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="25dp"
+            android:onClick="abortMove"
+            android:text="Cancel Move"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/pageInfo_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:text="Page 1 of 1\n1-500 of 5000"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent" />
+
+        <ImageButton
+            android:id="@+id/prevPage_Button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:onClick="getPrevPage"
+            android:src="@drawable/ic_navigate_before_black_48dp" />
+
+        <ImageButton
+            android:id="@+id/nextPage_Button"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:onClick="getNextPage"
+            android:src="@drawable/ic_navigate_next_black_48dp" />
+
+
+    </LinearLayout>
+</LinearLayout>
