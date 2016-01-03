@@ -131,6 +131,20 @@ public final class Database {
         return count > 0;
     }
 
+    public boolean accountExistsIn(String name, long folder) {
+        SIFAM.log("Database > accountExistsIn");
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] columns = {"count(" + Accounts._ID + ")"};
+        String selection = Accounts.cName + "=? AND " + Accounts.cFolder + "=?";
+        String[] selectionArgs = {name, "" + folder};
+        Cursor c = db.query(Accounts.tName, columns, selection, selectionArgs, null, null, null);
+        c.moveToFirst();
+        int count = c.getInt(0);
+        c.close();
+        db.close();
+        return count > 0;
+    }
+
     public long createFolder(String name, long parentFolder) {
         SIFAM.log("Database > createFolder");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -378,12 +392,23 @@ public final class Database {
     }
 
     public void moveAccount(Account account, long newFolder) {
-        SIFAM.log("Database > moveAccount");
+        SIFAM.log("Database > moveAccount [account]");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         ContentValues values = new ContentValues();
         values.put(Accounts.cFolder, newFolder);
         String selection = Accounts._ID + "=?";
         String[] selectionArgs = {String.valueOf(account.id)};
+        db.update(Accounts.tName, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void moveAccount(long id, long newFolder){
+        SIFAM.log("Database > moveAccount [id]");
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(Accounts.cFolder, newFolder);
+        String selection = Accounts._ID + "=?";
+        String[] selectionArgs = {String.valueOf(id)};
         db.update(Accounts.tName, values, selection, selectionArgs);
         db.close();
     }

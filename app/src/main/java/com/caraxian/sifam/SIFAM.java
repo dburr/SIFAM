@@ -23,9 +23,13 @@ public class SIFAM extends Application {
     public static Integer MAX_DISPLAY = 200000;
     public static String SORT_BY = "name";
     public static boolean REVERSE_SORT = false;
+    public static boolean CLOSE_BUTTON = false;
+    public static boolean OVERLAY_NAME = false;
     public static boolean ALLOW_DUPLICATE_SAVES = false;
     public static boolean QUICK_SAVE = false;
+    public static boolean ALT_QS_NAME = false;
     public static boolean NO_WARNINGS = false;
+    public static boolean NO_DELETE_WARNINGS = false;
     public static boolean AUTO_START = true;
     public static boolean FOLDERS_ON_BOTTOM = false;
     public static SharedPreferences sharedPreferences;
@@ -34,6 +38,8 @@ public class SIFAM extends Application {
     public static List<Server> serverList = new ArrayList<Server>();
     private static Context context;
     static private Process shell = getShell();
+    public static String lastLoadedAccountName = "Test Overlay";
+
 
     public static Context getContext() {
         return context;
@@ -91,14 +97,20 @@ public class SIFAM extends Application {
         return executedSuccesfully;
     }
 
+
     public static void updateSettings() {
         skipRootCheck = sharedPreferences.getBoolean("skipRootCheck", false);
         QUICK_SAVE = sharedPreferences.getBoolean("quick_save", false);
+        ALT_QS_NAME = sharedPreferences.getBoolean("alternate_qs",false);
         AUTO_START = sharedPreferences.getBoolean("auto_start", true);
         FOLDERS_ON_BOTTOM = sharedPreferences.getBoolean("folders_on_bottom", false);
         SORT_BY = sharedPreferences.getString("sort_by", "name");
         REVERSE_SORT = sharedPreferences.getBoolean("reverse_sort", false);
         NO_WARNINGS = sharedPreferences.getBoolean("no_warnings", false);
+        NO_DELETE_WARNINGS = sharedPreferences.getBoolean("no_delete_warning",false);
+        CLOSE_BUTTON = sharedPreferences.getBoolean("close_button",false);
+        OVERLAY_NAME = sharedPreferences.getBoolean("overlay_name",false);
+        ALLOW_DUPLICATE_SAVES = sharedPreferences.getBoolean("allow_duplicate_save",false);
     }
 
     public static void executeRootCommand(String... command) {
@@ -147,6 +159,7 @@ public class SIFAM extends Application {
 
     public static void Toast(String text) {
         Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+        SIFAM.log("Toast > " + text);
     }
 
     public static void delayAction(Runnable action, int delay) {

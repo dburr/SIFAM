@@ -55,6 +55,8 @@ public class Server {
         if (attempt > 2) {
             failCheckCount++;
             if (failCheckCount > 5) {
+
+                SIFAM.log(code + " > Failed to read GameEngineActivity > Abort");
                 SIFAM.Toast("Failed to access '" + code + "' GameEngineActivity.\nDid you allow SIFAM root access?");
                 return;
             }
@@ -63,7 +65,7 @@ public class Server {
                 public void run() {
                     updateFromGameEngineActivity();
                 }
-            }, 500);
+            }, 200*failCheckCount);
             error = true;
             return;
         }
@@ -92,15 +94,17 @@ public class Server {
                     } else {
                         assetKey = "";
                     }
+                    SIFAM.log(code + " > Updated from GameEngineActivity");
+                    failCheckCount = 0;
                 } catch (Exception ex) {
                     SIFAM.log(ex);
-                    SIFAM.log("Failed to Read GameEngineActivity - Attempting Fix");
+                    SIFAM.log(code + " > Failed to Read GameEngineActivity - Attempting Fix");
                     SIFAM.forcePermission(gameEngineActivity);
                     SIFAM.forcePermission(gameEngineActivity.getParentFile());
                     updateFromGameEngineActivity(attempt + 1);
                 }
             } else {
-                SIFAM.log("No GameEngineActivity exists");
+                SIFAM.log(code + " > No GameEngineActivity exists");
                 currentUser = "";
                 currentPass = "";
                 assetKey = "";
@@ -158,6 +162,10 @@ public class Server {
     }
 
     public void openApp() {
+        SIFAM.log("Server[" + code + "] > openApp");
+        if (SIFAM.CLOSE_BUTTON) {
+            SIFAM.getContext().startService(new Intent(SIFAM.getContext(), OverlayService.class));
+        }
         Intent launchIntent = SIFAM.getContext().getPackageManager().getLaunchIntentForPackage(className);
         SIFAM.getContext().startActivity(launchIntent);
     }

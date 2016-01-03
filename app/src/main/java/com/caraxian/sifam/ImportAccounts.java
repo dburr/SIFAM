@@ -22,6 +22,7 @@ public class ImportAccounts extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_accounts);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setTitle("SIFAM: Import Accounts");
     }
     public boolean onOptionsItemSelected(MenuItem item) {
         SIFAM.log("MainActivity.java > onOptionsMenuSelected");

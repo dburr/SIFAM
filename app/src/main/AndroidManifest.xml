@@ -3,6 +3,8 @@
     package="com.caraxian.sifam"
     android:versionCode="@string/build"
     android:versionName="@string/version">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <application
         android:name=".SIFAM"
         android:allowBackup="true"
@@ -20,5 +22,12 @@
         <activity android:name=".ErrorDetected" />
         <activity android:name=".AppPreferences" />
         <activity android:name=".ImportAccounts" />
+        <activity android:name=".ExportAccounts"></activity>
+
+        <service android:name=".OverlayService" >
+        </service>
+
+
     </application>
+
 </manifest>

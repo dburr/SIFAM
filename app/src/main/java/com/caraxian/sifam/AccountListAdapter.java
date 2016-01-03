@@ -35,6 +35,8 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
         holder.info = (TextView) row.findViewById(R.id.account_info);
         holder.serverId = (TextView) row.findViewById(R.id.account_server);
         holder.lockedIcon = (ImageView) row.findViewById(R.id.account_locked);
+        holder.accountNotSelected= (ImageView) row.findViewById(R.id.account_not_selected);
+        holder.accountSelected = (ImageView) row.findViewById(R.id.account_selected);
         Account account = data.get(position);
         holder.accountName.setText(account.name);
         if (account.locked == true) {
@@ -47,6 +49,8 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
             holder.loadedIcon.setVisibility(View.INVISIBLE);
             holder.info.setVisibility(View.GONE);
             holder.serverId.setVisibility(View.GONE);
+            holder.accountSelected.setVisibility(View.GONE);
+            holder.accountNotSelected.setVisibility(View.GONE);
         } else {
             holder.serverId.setVisibility(View.VISIBLE);
             holder.serverId.setText(account.server);
@@ -60,6 +64,18 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
             } else {
                 holder.loadedIcon.setVisibility(View.INVISIBLE);
             }
+            if (MainActivity.selectedAccounts.size() == 0 || account.locked){
+                holder.accountSelected.setVisibility(View.GONE);
+                holder.accountNotSelected.setVisibility(View.GONE);
+            }else {
+                if (MainActivity.selectedAccounts.contains(account.id)) {
+                    holder.accountSelected.setVisibility(View.VISIBLE);
+                    holder.accountNotSelected.setVisibility(View.GONE);
+                } else {
+                    holder.accountSelected.setVisibility(View.GONE);
+                    holder.accountNotSelected.setVisibility(View.VISIBLE);
+                }
+            }
         }
         return row;
     }
@@ -71,6 +87,8 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
         TextView serverId;
         TextView info;
         ImageView lockedIcon;
+        ImageView accountSelected;
+        ImageView accountNotSelected;
     }
 
 }
