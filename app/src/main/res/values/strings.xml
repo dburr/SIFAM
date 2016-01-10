@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">SIFAM</string>
-    <string name="version">0.7.0</string>
-    <string name="build">28</string>
+    <string name="version">0.7.1</string>
+    <string name="build">29</string>
 </resources>

@@ -5,16 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -166,9 +170,44 @@ public class SIFAM extends Application {
         final Handler handle = new Handler();
         handle.postDelayed(action, delay);
     }
+    public static void exportDatabse(String databaseName, String backup) {
+        exportDatabse(databaseName,backup,null);
+    }
+    public static void exportDatabse(String databaseName, String backup, View view) {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            File data = Environment.getDataDirectory();
+            if (sd.canWrite()) {
+                if (new File(sd,"SIFAM//Backups").exists() == false){
+                    new File(sd,"SIFAM//Backups").mkdirs();
+                }
+                String currentDBPath = "//data//com.caraxian.sifam//databases//"+databaseName+"";
+                String backupDBPath = "SIFAM//Backup//" +backup;
+                File currentDB = new File(data, currentDBPath);
+                File backupDB = new File(sd, backupDBPath);
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                    if (view != null) {
+                        view.findViewById(R.id.backupSuccessful).setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (view != null) {
+                view.findViewById(R.id.backupFailed).setVisibility(View.VISIBLE);
+            }
+            SIFAM.log(e);
+        }
+    }
 
     @Override
     public void onCreate() {
+        super.onCreate();
+        context = getApplicationContext();
         log("SIFAM:onCreate");
         final Thread.UncaughtExceptionHandler androidErrorHandle = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -185,8 +224,7 @@ public class SIFAM extends Application {
                 }
             }
         });
-        super.onCreate();
-        context = getApplicationContext();
+
         SIFAM.log("Initiating SIFAM " + getResources().getString(R.string.version) + " (" + getResources().getString(R.string.build) + ")");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         deviceInformation();
@@ -197,4 +235,8 @@ public class SIFAM extends Application {
         serverList.add(new Server("CN", "China", "klb.android.lovelivecn"));
         updateSettings();
     }
+
+
+
+
 }

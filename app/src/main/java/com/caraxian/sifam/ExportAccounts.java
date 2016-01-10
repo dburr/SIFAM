@@ -46,37 +46,12 @@ public class ExportAccounts extends AppCompatActivity {
         findViewById(R.id.backupSuccessful).setVisibility(View.GONE);
         findViewById(R.id.backupFailed).setVisibility(View.GONE);
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
         String timestamp = sdf.format(cal.getTime());
-        exportDatabse("SIFAM.db",timestamp + ".db");
+        SIFAM.exportDatabse("SIFAM.db",timestamp + ".db");
     }
 
-    public void exportDatabse(String databaseName, String backup) {
-        try {
-            File sd = Environment.getExternalStorageDirectory();
-            File data = Environment.getDataDirectory();
-            if (sd.canWrite()) {
-                if (new File(sd,"SIFAM Backup").exists() == false){
-                    new File(sd,"SIFAM Backup").mkdir();
-                }
-                String currentDBPath = "//data//"+getPackageName()+"//databases//"+databaseName+"";
-                String backupDBPath = "SIFAM Backup//" +backup;
-                File currentDB = new File(data, currentDBPath);
-                File backupDB = new File(sd, backupDBPath);
-                if (currentDB.exists()) {
-                    FileChannel src = new FileInputStream(currentDB).getChannel();
-                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
-                    dst.transferFrom(src, 0, src.size());
-                    src.close();
-                    dst.close();
-                    findViewById(R.id.backupSuccessful).setVisibility(View.VISIBLE);
-                }
-            }
-        } catch (Exception e) {
-            findViewById(R.id.backupFailed).setVisibility(View.VISIBLE);
-            SIFAM.log(e);
-        }
-    }
+
 
 
 }

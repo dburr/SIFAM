@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd 'at' HH:mm:ss");
                 name = sdf.format(cal.getTime());
             }else{
-                int nameInt = db.countTotalAccounts();
+                int nameInt = db.countAccounts(CURRENT_FOLDER,"",false) + 1;
                 while (db.accountExistsIn(""+nameInt,CURRENT_FOLDER)){
                     nameInt++;
                 }
