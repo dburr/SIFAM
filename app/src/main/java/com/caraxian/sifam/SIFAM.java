@@ -182,7 +182,7 @@ public class SIFAM extends Application {
                     new File(sd,"SIFAM//Backups").mkdirs();
                 }
                 String currentDBPath = "//data//com.caraxian.sifam//databases//"+databaseName+"";
-                String backupDBPath = "SIFAM//Backup//" +backup;
+                String backupDBPath = "SIFAM//Backups//" +backup;
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
                 if (currentDB.exists()) {
@@ -225,7 +225,7 @@ public class SIFAM extends Application {
             }
         });
 
-        SIFAM.log("Initiating SIFAM " + getResources().getString(R.string.version) + " (" + getResources().getString(R.string.build) + ")");
+        SIFAM.log("Initiating SIFAM " + BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         deviceInformation();
         serverList.add(new Server("EN", "English", "klb.android.lovelive_en"));
@@ -235,8 +235,5 @@ public class SIFAM extends Application {
         serverList.add(new Server("CN", "China", "klb.android.lovelivecn"));
         updateSettings();
     }
-
-
-
 
 }

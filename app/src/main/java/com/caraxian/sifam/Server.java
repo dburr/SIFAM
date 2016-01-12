@@ -46,6 +46,21 @@ public class Server {
 
     }
 
+    public void deleteGameEngineActivity(){
+        if (gameEngineActivity.exists()){
+            gameEngineActivity.delete();
+            updateFromGameEngineActivity();
+            SIFAM.delayAction(new Runnable() {
+                @Override
+                public void run() {
+                    if (currentUser.equals("")){
+                        SIFAM.Toast(code + " GameEngineActivity Deleted");
+                    }
+                }
+            },500);
+        }
+    }
+
     public void updateFromGameEngineActivity() {
         updateFromGameEngineActivity(1);
     }

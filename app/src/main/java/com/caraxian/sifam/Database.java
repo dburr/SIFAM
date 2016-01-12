@@ -37,18 +37,6 @@ public final class Database {
         return newRowId;
     }
 
-    public int countTotalAccounts() {
-        SIFAM.log("Database > countAccounts");
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String[] projection = {"count(" + Folders._ID + ")"};
-        Cursor c = db.query(Accounts.tName, projection, null, null, null, null, null);
-        c.moveToFirst();
-        int count = c.getInt(0);
-        c.close();
-        db.close();
-        return count;
-    }
-
     public int countAccounts(long folder, String search, boolean searchAll) {
         SIFAM.log("Database > countAccounts");
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -166,7 +154,7 @@ public final class Database {
                 Folders.cLock,
                 Folders.cParent
         };
-        String sortOrder = Accounts.cName + " ASC";
+        String sortOrder = Folders.cName + " ASC";
         String selection = Folders.cParent + "=?";
         String[] selectionArgs = {String.valueOf(folder)};
         try {

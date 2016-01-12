@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,7 +25,6 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private long CURRENT_FOLDER = -1;
     private Account MOVE_ACCOUNT;
     public static ArrayList<Long> selectedAccounts = new ArrayList<>();
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         SIFAM.log("MainActivity.java > onCreateOptionsMenu");
@@ -154,10 +153,100 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     SIFAM.Toast("No Servers Enabled");
                 }
+                return true;
+            }
+            case R.id.menu_deleteCurrent: {
+                ArrayList<Server> saveServersDyn = new ArrayList<Server>();
+                ArrayList<String> saveServerTitles = new ArrayList<String>();
+                for (Server s : SIFAM.serverList) {
+                    if (s.enabled && s.installed) {
+                        saveServersDyn.add(s);
+                        saveServerTitles.add(s.name);
+                    }
+                }
+                final ArrayList<Server> saveServers = saveServersDyn;
+                if (saveServers.size() != 0) {
+                    if (saveServers.size() > 1) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        CharSequence[] items = saveServerTitles.toArray(new CharSequence[saveServerTitles.size()]);
+                        builder.setTitle("Delete GameEngineActivity")
+                                .setItems(items, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        deleteCurrentAccount(saveServers.get(which));
+                                    }
+                                });
+                        builder.create().show();
+                    } else {
+                        createBlankAccount(saveServers.get(0));
+                    }
+                } else {
+                    SIFAM.Toast("No Servers Enabled");
+                }
+                return true;
             }
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    public void deleteCurrentAccount(final Server server) {
+        SIFAM.log("MainActivity > deleteCurrentAccount(server) " + server.name);
+        SIFAM.lastLoadedAccountName = "New Account";
+        server.updateFromGameEngineActivity();
+        if (server.error == false) {
+            if (server.currentUser.equals("")) {
+                SIFAM.Toast("No Data to Delete");
+            } else {
+                final Runnable doDelete = new Runnable() {
+                    @Override
+                    public void run() {
+                        server.deleteGameEngineActivity();
+                        SIFAM.delayAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                getCurrentPage();
+                            }
+                        }, 1000);
+                    }
+                };
+                final Runnable deleteConfirm = new Runnable() {
+                    @Override
+                    public void run() {
+                        final AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
+                        confirmDelete.setTitle("Delete Account");
+                        confirmDelete.setMessage("Do you really want to delete the GameEngineActivity file?\nIt doesn't appear to be saved.");
+                        confirmDelete.setIcon(android.R.drawable.ic_dialog_alert);
+                        confirmDelete.setPositiveButton("Delete It!", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                confirmDelete.setMessage("Absolutely Sure? Delete unsaved GameEngineActivity?");
+                                confirmDelete.setPositiveButton("Keep It", null);
+                                confirmDelete.setNegativeButton("Delete It!", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        doDelete.run();
+                                    }
+                                });
+                                confirmDelete.show();
+                            }
+                        });
+                        confirmDelete.setNegativeButton("Keep It", null);
+                        confirmDelete.show();
+                    }
+                };
+                Account currentUser = db.findAccountByUser(server.currentUser, server.code);
+                if (currentUser == null && SIFAM.NO_WARNINGS == false) {
+                    deleteConfirm.run();
+                } else {
+                    if (SIFAM.NO_DELETE_WARNINGS || currentUser.userPass.equals(server.currentPass)) {
+                        doDelete.run();
+                    } else {
+                        deleteConfirm.run();
+                    }
+                }
+            }
+        } else {
+            SIFAM.Toast("Error");
         }
     }
 
@@ -246,12 +335,12 @@ public class MainActivity extends AppCompatActivity {
                 Calendar cal = Calendar.getInstance();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy MM dd 'at' HH:mm:ss");
                 name = sdf.format(cal.getTime());
-            }else{
-                int nameInt = db.countAccounts(CURRENT_FOLDER,"",false) + 1;
-                while (db.accountExistsIn(""+nameInt,CURRENT_FOLDER)){
+            } else {
+                int nameInt = db.countAccounts(CURRENT_FOLDER, "", false) + 1;
+                while (db.accountExistsIn("" + nameInt, CURRENT_FOLDER)) {
                     nameInt++;
                 }
-                name = ""+nameInt;
+                name = "" + nameInt;
             }
         }
         db.saveNewAccount(name, server.currentUser, server.currentPass, server.code, CURRENT_FOLDER);
@@ -390,15 +479,14 @@ public class MainActivity extends AppCompatActivity {
         mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
         ACCOUNT_LIST = (ListView) findViewById(R.id.accountList);
-        TextView t = (TextView) findViewById(R.id.sifamVersion);
-        t.setText(getResources().getString(R.string.version));
         ACCOUNT_LIST_DATA = new ArrayList<>();
         ACCOUNT_LIST_ADAPTER = new AccountListAdapter(MainActivity.this, R.layout.account_list, ACCOUNT_LIST_DATA);
         ACCOUNT_LIST.setAdapter(ACCOUNT_LIST_ADAPTER);
         EditText searchEditText = (EditText) findViewById(R.id.search_editText);
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -428,10 +516,10 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectedAccounts.size() == 0 || ACCOUNT_LIST_DATA.get(position).isFolder) {
                     startLoadAccount(ACCOUNT_LIST_DATA.get(position));
-                }else{
-                    if (ACCOUNT_LIST_DATA.get(position).locked){
+                } else {
+                    if (ACCOUNT_LIST_DATA.get(position).locked) {
                         SIFAM.Toast("Cannot select locked account.");
-                    }else {
+                    } else {
                         toggleSelect(ACCOUNT_LIST_DATA.get(position));
                     }
                 }
@@ -455,23 +543,24 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, AppPreferences.class));
     }
 
-    public void moveSelected(View v){
-        for (Long i:selectedAccounts){
-            db.moveAccount(i,CURRENT_FOLDER);
+    public void moveSelected(View v) {
+        for (Long i : selectedAccounts) {
+            db.moveAccount(i, CURRENT_FOLDER);
         }
         getCurrentPage();
     }
-    public void toggleSelect(Account account){
+
+    public void toggleSelect(Account account) {
         abortMove(null);
-        if (selectedAccounts.contains(account.id)){
+        if (selectedAccounts.contains(account.id)) {
             selectedAccounts.remove(account.id);
-        }else{
+        } else {
             selectedAccounts.add(account.id);
         }
         ACCOUNT_LIST_ADAPTER.notifyDataSetChanged();
-        if (selectedAccounts.size() == 0){
+        if (selectedAccounts.size() == 0) {
             clearSelection(null);
-        }else{
+        } else {
             findViewById(R.id.sifamVersion).setVisibility(View.GONE);
             findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
             findViewById(R.id.bulk_move).setVisibility(View.VISIBLE);
@@ -530,7 +619,7 @@ public class MainActivity extends AppCompatActivity {
                 getCurrentPage();
                 break;
             }
-            case R.id.context_select:{
+            case R.id.context_select: {
                 toggleSelect(contextAccount);
                 break;
             }
@@ -645,7 +734,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.sifamVersion).setVisibility(View.GONE);
         findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
     }
-    public void clearSelection(View v){
+
+    public void clearSelection(View v) {
         selectedAccounts.clear();
         ACCOUNT_LIST_ADAPTER.notifyDataSetChanged();
         findViewById(R.id.bottomBar).setVisibility(View.GONE);
@@ -653,11 +743,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.bulk_clear).setVisibility(View.GONE);
         findViewById(R.id.bulk_count).setVisibility(View.GONE);
     }
+
     public void abortMove(View v) {
         SIFAM.log("MainActivity.java > abortMove(v)");
         MOVE_ACCOUNT = null;
-        findViewById(R.id.moveHere_Button).setVisibility(View.GONE);;
-        findViewById(R.id.cancelMove_Button).setVisibility(View.GONE);;
+        findViewById(R.id.moveHere_Button).setVisibility(View.GONE);
+        ;
+        findViewById(R.id.cancelMove_Button).setVisibility(View.GONE);
+        ;
         findViewById(R.id.sifamVersion).setVisibility(View.VISIBLE);
         findViewById(R.id.bottomBar).setVisibility(View.GONE);
     }
@@ -695,10 +788,10 @@ public class MainActivity extends AppCompatActivity {
     public void deleteAccount(final Account account) {
         SIFAM.log("MainActivity.java > deleteAccount(account)");
         if (account.locked == false) {
-            if (SIFAM.NO_DELETE_WARNINGS && SIFAM.NO_WARNINGS){
+            if (SIFAM.NO_DELETE_WARNINGS && SIFAM.NO_WARNINGS) {
                 db.deleteAccount(account);
                 getCurrentPage();
-            }else {
+            } else {
                 final AlertDialog.Builder confirmDelete = new AlertDialog.Builder(this);
                 confirmDelete.setTitle("Delete Account");
                 confirmDelete.setMessage("Do you really want to delete '" + account.name + "' on " + account.server + "?");
@@ -859,7 +952,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startLoadAccount(final Account account) {
-        SIFAM.log("MainActivity.java > startLoadAccount > "  + account.id + "(" + account.name + ")");
+        SIFAM.log("MainActivity.java > startLoadAccount > " + account.id + "(" + account.name + ")");
         SIFAM.lastLoadedAccountName = getPathToFolder(CURRENT_FOLDER) + " > " + account.name;
         if (account.isFolder) {
             changeFolder(account.id);
@@ -872,7 +965,6 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             boolean successfulLoad = s.writeToGameEngineActivity(0, account.userKey, account.userPass);
                             if (successfulLoad) {
-
 
 
                                 db.updateAccessTime(account);
@@ -918,7 +1010,7 @@ public class MainActivity extends AppCompatActivity {
         clearSelection(null);
         changeFolder(SIFAM.sharedPreferences.getLong("CURRENT_FOLDER", -1));
         getCurrentPage();
-        stopService(new Intent(SIFAM.getContext(),OverlayService.class));
+        stopService(new Intent(SIFAM.getContext(), OverlayService.class));
     }
 
     public void getCurrentPage() {

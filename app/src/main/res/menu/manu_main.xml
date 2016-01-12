@@ -31,11 +31,14 @@
         android:title="Settings"
         android:icon="@drawable/ic_settings_white_24dp"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_deleteCurrent"
+        android:title="Delete GameEngineActivity"
+        app:showAsAction="never"/>
     <item android:id="@+id/menu_import"
         android:title="Import Accounts"
         app:showAsAction="never"/>
     <item android:id="@+id/menu_export"
-        android:title="Backup Accounts"
+        android:title="Backup Management"
         app:showAsAction="never"/>
 
 </menu>
