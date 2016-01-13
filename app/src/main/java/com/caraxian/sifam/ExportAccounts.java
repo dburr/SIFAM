@@ -122,6 +122,7 @@ public class ExportAccounts extends AppCompatActivity {
         for (Account f : folders){
             RestoreFolder r = new RestoreFolder(f.id,mainDB.createFolder(f.name, newid));
             restoreAccounts(restoreDB,mainDB,r.originalID,r.newID);
+            restoreFolders(restoreDB,mainDB,r.originalID,r.newID);
         }
     }
 
