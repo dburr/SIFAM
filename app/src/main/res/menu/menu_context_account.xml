@@ -16,4 +16,7 @@
     <item
         android:id="@+id/context_lock"
         android:title="Lock Account"/>
+    <item
+        android:id="@+id/context_qr"
+        android:title="Get QR Code"/>
 </menu>

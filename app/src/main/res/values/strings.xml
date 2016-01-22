@@ -20,5 +20,6 @@
 	<string name="menu_delete_gea">Delete GameEngineActivity</string>
 	<string name="menu_import">Import Accounts</string>
 	<string name="menu_backup">Backup Management</string>
-	
+	<string name="menu_qr">Scan QR</string>
+
 </resources>

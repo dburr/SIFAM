@@ -8,7 +8,6 @@
     android:paddingTop="1dp"
     tools:context=".MainActivity">
 
-
     <LinearLayout
         android:id="@+id/view_search"
         android:layout_width="fill_parent"
@@ -41,8 +40,6 @@
 
     </LinearLayout>
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="1dip"
@@ -50,64 +47,67 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/folder_currentWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/folder_currentWrapper"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="17sp"
-                android:textSize="15sp"
-                android:text="Folder:"
-                android:layout_marginRight="10dp"
                 android:layout_marginLeft="5dp"
-                android:textAlignment="2"/>
+                android:layout_marginRight="10dp"
+                android:text="Folder:"
+                android:textAlignment="2"
+                android:textSize="15sp" />
+
             <TextView
                 android:id="@+id/folder_currentFolder"
                 android:layout_width="match_parent"
                 android:layout_height="17sp"
-                android:textSize="15sp"
-                android:text="Current Folder"
-                android:layout_weight="1"
                 android:layout_marginLeft="5dp"
-                android:singleLine="true"
+                android:layout_weight="1"
                 android:ellipsize="marquee"
-                android:visibility="visible"/>
+                android:singleLine="true"
+                android:text="Current Folder"
+                android:textSize="15sp"
+                android:visibility="visible" />
+
             <TextView
                 android:id="@+id/folder_currentCount"
                 android:layout_width="wrap_content"
                 android:layout_height="17sp"
-                android:textSize="15sp"
-                android:text="0"
-                android:layout_marginRight="5dp"
                 android:layout_marginLeft="10dp"
-                android:textAlignment="2"/>
+                android:layout_marginRight="5dp"
+                android:text="0"
+                android:textAlignment="2"
+                android:textSize="15sp" />
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/errorMessage_noEnabledServers"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:gravity="center">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:text="No Servers Enabled"
                 android:textAlignment="center"
-                android:layout_marginTop="15dp"
-                android:textColor="@color/error"/>
+                android:textColor="@color/error" />
+
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Settings"
                 android:onClick="openSettings"
-                android:padding="5dp"/>
-
+                android:padding="5dp"
+                android:text="Settings" />
         </LinearLayout>
-
 
         <ListView
             android:id="@+id/accountList"
@@ -121,39 +121,43 @@
             android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:divider="@null"
-            android:fastScrollEnabled="true"
-            android:fastScrollAlwaysVisible="true"
             android:dividerHeight="0dp"
+            android:fastScrollAlwaysVisible="true"
+            android:fastScrollEnabled="true"
             tools:listitem="@android:layout/simple_list_item_2" />
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:visibility="visible"
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
-        android:id="@+id/bottomBar"
-        android:background="@color/colorPrimary">
+        android:visibility="visible">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
+                android:id="@+id/bulk_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="visible"
-                android:id="@+id/bulk_count"
-                android:textColor="@color/colorAccent"
                 android:paddingLeft="10dp"
                 android:paddingTop="5dp"
-                android:text="Selected Accounts:"/>
-            </LinearLayout>
+                android:text="Selected Accounts:"
+                android:textColor="@color/colorAccent"
+                android:visibility="visible" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/sifamVersion"
                 android:layout_width="wrap_content"
@@ -164,6 +168,7 @@
                 android:text="Version"
                 android:textColor="@color/colorAccent"
                 android:visibility="gone" />
+
             <Button
                 android:id="@+id/moveHere_Button"
                 android:layout_width="wrap_content"
@@ -175,6 +180,7 @@
                 android:onClick="confirmMove"
                 android:text="Move Here"
                 android:visibility="visible" />
+
             <Button
                 android:id="@+id/bulk_move"
                 android:layout_width="wrap_content"
@@ -186,6 +192,7 @@
                 android:onClick="moveSelected"
                 android:text="Move"
                 android:visibility="visible" />
+
             <Button
                 android:id="@+id/bulk_clear"
                 android:layout_width="wrap_content"
@@ -197,6 +204,7 @@
                 android:onClick="clearSelection"
                 android:text="Clear"
                 android:visibility="visible" />
+
             <Button
                 android:id="@+id/cancelMove_Button"
                 android:layout_width="wrap_content"
@@ -204,8 +212,8 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="25dp"
-                android:onClick="abortMove"
                 android:layout_weight="1"
+                android:onClick="abortMove"
                 android:text="Cancel Move"
                 android:visibility="gone" />
 
@@ -216,10 +224,11 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="25dp"
-                android:onClick="selectAll"
                 android:layout_weight="1"
+                android:onClick="selectAll"
                 android:text="Select All"
                 android:visibility="gone" />
+
             <TextView
                 android:id="@+id/pageInfo_textView"
                 android:layout_width="wrap_content"
@@ -228,26 +237,25 @@
                 android:layout_marginRight="5dp"
                 android:text="Page 1 of 1\n1-500 of 5000"
                 android:textAlignment="center"
-                android:visibility="gone"
-                android:textColor="@color/colorAccent" />
+                android:textColor="@color/colorAccent"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/prevPage_Button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:onClick="getPrevPage"
-                android:visibility="gone"
-                android:src="@drawable/ic_navigate_before_black_48dp" />
+                android:src="@drawable/ic_navigate_before_black_48dp"
+                android:visibility="gone" />
 
             <ImageButton
                 android:id="@+id/nextPage_Button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:onClick="getNextPage"
-                android:visibility="gone"
-                android:src="@drawable/ic_navigate_next_black_48dp" />
+                android:src="@drawable/ic_navigate_next_black_48dp"
+                android:visibility="gone" />
         </LinearLayout>
-
 
 
     </LinearLayout>

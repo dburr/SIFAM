@@ -40,5 +40,8 @@
     <item android:id="@+id/menu_export"
         android:title="@string/menu_backup"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_qr"
+        android:title="@string/menu_qr"
+        app:showAsAction="never"/>
 
 </menu>
