@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.caraxian.sifam">
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".SIFAM"
         android:allowBackup="true"
@@ -22,10 +25,9 @@
         <activity android:name=".ErrorDetected" />
         <activity android:name=".AppPreferences" />
         <activity android:name=".ImportAccounts" />
-        <activity android:name=".ExportAccounts"></activity>
+        <activity android:name=".ExportAccounts" />
 
-        <service android:name=".OverlayService" >
-        </service>
+        <service android:name=".OverlayService"></service>
 
 
     </application>

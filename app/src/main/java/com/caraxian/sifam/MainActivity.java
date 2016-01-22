@@ -1,9 +1,13 @@
 package com.caraxian.sifam;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -14,17 +18,29 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private int CURRENT_OFFSET = 0;
     private long CURRENT_FOLDER = -1;
     private Account MOVE_ACCOUNT;
+    private Bitmap temp_QR;
     public static ArrayList<Long> selectedAccounts = new ArrayList<>();
 
     @Override
@@ -185,10 +202,62 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return true;
             }
+            case R.id.menu_qr: {
+                IntentIntegrator scanIntegrator = new IntentIntegrator(MainActivity.this);
+                scanIntegrator.initiateScan();
+                return true;
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        SIFAM.log("MainActivity > onActivityResult", "Request Code: " + requestCode + "");
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (resultCode == RESULT_OK) {
+            if (scanningResult != null) {
+                String scanContent = scanningResult.getContents();
+                String scanFormat = scanningResult.getFormatName();
+                if (scanContent.startsWith("SIFAM:")) {
+                    if (scanContent.startsWith("SIFAM:1:")) {
+                        //QR Format from 0.8.0+
+                        String[] split = scanContent.split(":");
+                        if (split.length == 6) {
+                            String name = split[2];
+                            String server_code = split[3];
+                            String key = split[4];
+                            String pass = split[5];
+                            Server server = null;
+                            for (Server s : SIFAM.serverList) {
+                                if (s.code.equals(server_code)) {
+                                    server = s;
+                                }
+                            }
+                            if (server != null) {
+                                db.saveNewAccount(name, key, pass, server.code, CURRENT_FOLDER);
+                            } else {
+                                SIFAM.Toast("Unsupported Server ID");
+                            }
+                        } else {
+                            SIFAM.Toast("Error in QR");
+                        }
+                    } else {
+                        SIFAM.Toast("Unsupported SIFAM QR Version\nIs there an update?");
+                    }
+                } else {
+                    SIFAM.Toast("Not a SIFAM QR Code");
+                }
+            } else {
+                SIFAM.Toast("No scan data received!");
+            }
+        } else if (resultCode == RESULT_CANCELED) {
+            // Handle cancel
+            SIFAM.log("No QR");
+        }
+
     }
 
     public void deleteCurrentAccount(final Server server) {
@@ -636,6 +705,29 @@ public class MainActivity extends AppCompatActivity {
                 renameFolder(contextAccount);
                 break;
             }
+            case R.id.context_qr: {
+                temp_QR = QR_Account(contextAccount);
+                if (temp_QR != null) {
+                    Dialog builder = new Dialog(this);
+                    builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    builder.getWindow().setBackgroundDrawable(
+                            new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            //nothing;
+                        }
+                    });
+                    ImageView imageView = new ImageView(this);
+                    imageView.setImageBitmap(temp_QR);
+                    builder.addContentView(imageView, new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT));
+                    builder.show();
+                }
+                temp_QR = null;
+                break;
+            }
         }
         return true;
     }
@@ -738,10 +830,10 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.selectAll_Button).setVisibility(View.GONE);
     }
 
-    public void selectAll(View v){
-        for (Account a : ACCOUNT_LIST_DATA){
-            if (a.isFolder == false){
-                if (!selectedAccounts.contains(a.id)){
+    public void selectAll(View v) {
+        for (Account a : ACCOUNT_LIST_DATA) {
+            if (a.isFolder == false) {
+                if (!selectedAccounts.contains(a.id)) {
                     selectedAccounts.add(a.id);
                 }
             }
@@ -929,6 +1021,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private Bitmap QR_Account(Account account) {
+        String temp_name = account.name.replaceAll("\\:", " ");
+        String qr_string = "SIFAM:1:" + temp_name + ":" + account.server + ":" + account.userKey + ":" + account.userPass + "";
+        QRCodeWriter writer = new QRCodeWriter();
+        try {
+            BitMatrix bitMatrix = writer.encode(qr_string, BarcodeFormat.QR_CODE, 512, 512);
+            int width = bitMatrix.getWidth();
+            int height = bitMatrix.getHeight();
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                }
+            }
+            return bmp;
+        } catch (WriterException e) {
+            SIFAM.log(e);
+        }
+        return null;
+    }
+
     public void changeFolder(long id) {
         SIFAM.log("MainActivity.java > changeFolder");
         CURRENT_FOLDER = id;
@@ -944,7 +1057,7 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.folder_currentWrapper).setVisibility(View.VISIBLE);
             currentFolder_textView.setText(getPathToFolder(CURRENT_FOLDER));
             currentFolder_textView.setSelected(true);
-            currentCount_textView.setText("" + db.countAccounts(CURRENT_FOLDER,"",false));
+            currentCount_textView.setText("" + db.countAccounts(CURRENT_FOLDER, "", false));
         }
         LinearLayout searchBar = (LinearLayout) findViewById(R.id.view_search);
         searchBar.setVisibility(View.GONE);
