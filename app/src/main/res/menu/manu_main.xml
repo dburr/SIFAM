@@ -4,41 +4,41 @@
     <item
         android:id="@+id/menu_save"
         android:icon="@drawable/ic_save_white_24dp"
-        android:title="Save"
+        android:title="@string/menu_save"
         app:showAsAction="always"/>
     <item
         android:id="@+id/menu_new"
         android:icon="@drawable/ic_add_white_24dp"
-        android:title="New Account"
+        android:title="@string/menu_new"
         app:showAsAction="always"/>
     <item android:id="@+id/menu_search"
         android:icon="@drawable/ic_search_white_24dp"
-        android:title="Search"
+        android:title="@string/menu_search"
         app:showAsAction="always"/>
     <item android:id="@+id/menu_sort"
         android:icon="@drawable/ic_sort_white_24dp"
-        android:title="Sort"
+        android:title="@string/menu_sort"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_refresh"
         android:icon="@drawable/ic_refresh_white_24dp"
-        android:title="Refresh"
+        android:title="@string/menu_refresh"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_newFolder"
         android:icon="@drawable/ic_create_new_folder_white_24dp"
-        android:title="New Folder"
+        android:title="@string/menu_new_folder"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_options"
-        android:title="Settings"
+        android:title="@string/menu_settings"
         android:icon="@drawable/ic_settings_white_24dp"
         app:showAsAction="ifRoom"/>
     <item android:id="@+id/menu_deleteCurrent"
-        android:title="Delete GameEngineActivity"
+        android:title="@string/menu_delete_gea"
         app:showAsAction="never"/>
     <item android:id="@+id/menu_import"
-        android:title="Import Accounts"
+        android:title="@string/menu_import"
         app:showAsAction="never"/>
     <item android:id="@+id/menu_export"
-        android:title="Backup Management"
+        android:title="@string/menu_backup"
         app:showAsAction="never"/>
 
 </menu>

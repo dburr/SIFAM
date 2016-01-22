@@ -167,6 +167,7 @@ public final class Database {
                     a.name = c.getString(c.getColumnIndex(Folders.cName));
                     a.id = c.getLong(c.getColumnIndex(Folders._ID));
                     a.parentFolder = c.getLong(c.getColumnIndex(Folders.cParent));
+                    a.accountCount = countAccounts(a.id,"",false);
                     if (c.getInt(c.getColumnIndex(Folders.cLock)) == 0) {
                         a.locked = false;
                     } else {

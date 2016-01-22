@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 public class AccountListAdapter extends ArrayAdapter<Account> {
@@ -37,6 +36,7 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
         holder.lockedIcon = (ImageView) row.findViewById(R.id.account_locked);
         holder.accountNotSelected= (ImageView) row.findViewById(R.id.account_not_selected);
         holder.accountSelected = (ImageView) row.findViewById(R.id.account_selected);
+        holder.itemCount = (TextView) row.findViewById(R.id.account_itemCount);
         Account account = data.get(position);
         holder.accountName.setText(account.name);
         if (account.locked == true) {
@@ -51,7 +51,18 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
             holder.serverId.setVisibility(View.GONE);
             holder.accountSelected.setVisibility(View.GONE);
             holder.accountNotSelected.setVisibility(View.GONE);
+            if (SIFAM.SHOW_ACCOUNT_COUNT_FOLDER){
+                holder.itemCount.setVisibility(View.VISIBLE);
+                if (account.accountCount == 1) {
+                    holder.itemCount.setText(SIFAM.s(R.string.item_account,account.accountCount));
+                }else {
+                    holder.itemCount.setText(SIFAM.s(R.string.item_accounts,account.accountCount));
+                }
+            }else{
+                holder.itemCount.setVisibility(View.GONE);
+            }
         } else {
+            holder.itemCount.setVisibility(View.GONE);
             holder.serverId.setVisibility(View.VISIBLE);
             holder.serverId.setText(account.server);
             holder.folderIcon.setVisibility(View.GONE);
@@ -86,6 +97,7 @@ public class AccountListAdapter extends ArrayAdapter<Account> {
         TextView accountName;
         TextView serverId;
         TextView info;
+        TextView itemCount;
         ImageView lockedIcon;
         ImageView accountSelected;
         ImageView accountNotSelected;

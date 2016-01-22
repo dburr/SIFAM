@@ -39,6 +39,7 @@ public class OverlayService extends Service {
 
         if (SIFAM.CLOSE_BUTTON || SIFAM.OVERLAY_NAME) {
             topLeftContainer = new LinearLayout(this);
+            topLeftContainer.setBackgroundColor(Color.BLACK);
 
             if (SIFAM.CLOSE_BUTTON) {
                 forceQuitButton = new ImageView(this);
@@ -48,7 +49,7 @@ public class OverlayService extends Service {
                     @Override
                     public void onClick(View v) {
                         Intent sifamActivity = new Intent(SIFAM.getContext(), MainActivity.class);
-                        sifamActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        sifamActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(sifamActivity);
                     }
                 });
@@ -57,7 +58,6 @@ public class OverlayService extends Service {
             if (SIFAM.OVERLAY_NAME) {
                 accountNameTextView = new TextView(this);
                 accountNameTextView.setText(SIFAM.lastLoadedAccountName);
-                accountNameTextView.setBackgroundColor(Color.BLACK);
                 accountNameTextView.setTextColor(Color.WHITE);
                 accountNameTextView.setTextSize(18);
                 accountNameTextView.setPadding(3, 0, 3, 3);

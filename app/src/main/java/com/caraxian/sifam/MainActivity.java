@@ -565,6 +565,7 @@ public class MainActivity extends AppCompatActivity {
             findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
             findViewById(R.id.bulk_move).setVisibility(View.VISIBLE);
             findViewById(R.id.bulk_clear).setVisibility(View.VISIBLE);
+            findViewById(R.id.selectAll_Button).setVisibility(View.VISIBLE);
             TextView t = (TextView) findViewById(R.id.bulk_count);
             t.setVisibility(View.VISIBLE);
             t.setText("Selected Accounts: " + selectedAccounts.size());
@@ -730,9 +731,24 @@ public class MainActivity extends AppCompatActivity {
         MOVE_ACCOUNT = account;
         clearSelection(null);
         findViewById(R.id.moveHere_Button).setVisibility(View.VISIBLE);
+        findViewById(R.id.bulk_move).setVisibility(View.GONE);
         findViewById(R.id.cancelMove_Button).setVisibility(View.VISIBLE);
         findViewById(R.id.sifamVersion).setVisibility(View.GONE);
         findViewById(R.id.bottomBar).setVisibility(View.VISIBLE);
+        findViewById(R.id.selectAll_Button).setVisibility(View.GONE);
+    }
+
+    public void selectAll(View v){
+        for (Account a : ACCOUNT_LIST_DATA){
+            if (a.isFolder == false){
+                if (!selectedAccounts.contains(a.id)){
+                    selectedAccounts.add(a.id);
+                }
+            }
+        }
+        TextView t = (TextView) findViewById(R.id.bulk_count);
+        t.setText("Selected Accounts: " + selectedAccounts.size());
+        ACCOUNT_LIST_ADAPTER.notifyDataSetChanged();
     }
 
     public void clearSelection(View v) {
@@ -742,6 +758,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.moveHere_Button).setVisibility(View.GONE);
         findViewById(R.id.bulk_clear).setVisibility(View.GONE);
         findViewById(R.id.bulk_count).setVisibility(View.GONE);
+        findViewById(R.id.selectAll_Button).setVisibility(View.GONE);
     }
 
     public void abortMove(View v) {
@@ -917,14 +934,17 @@ public class MainActivity extends AppCompatActivity {
         CURRENT_FOLDER = id;
         SIFAM.sharedPreferences.edit().putLong("CURRENT_FOLDER", CURRENT_FOLDER).commit();
         CURRENT_OFFSET = 0;
-        TextView currentFolder_textView = (TextView) findViewById(R.id.folder_textView);
+        TextView currentFolder_textView = (TextView) findViewById(R.id.folder_currentFolder);
+        TextView currentCount_textView = (TextView) findViewById(R.id.folder_currentCount);
         if (CURRENT_FOLDER == -1) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            currentFolder_textView.setVisibility(View.GONE);
+            findViewById(R.id.folder_currentWrapper).setVisibility(View.GONE);
         } else {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            currentFolder_textView.setVisibility(View.VISIBLE);
-            currentFolder_textView.setText("Folder:   " + getPathToFolder(CURRENT_FOLDER));
+            findViewById(R.id.folder_currentWrapper).setVisibility(View.VISIBLE);
+            currentFolder_textView.setText(getPathToFolder(CURRENT_FOLDER));
+            currentFolder_textView.setSelected(true);
+            currentCount_textView.setText("" + db.countAccounts(CURRENT_FOLDER,"",false));
         }
         LinearLayout searchBar = (LinearLayout) findViewById(R.id.view_search);
         searchBar.setVisibility(View.GONE);

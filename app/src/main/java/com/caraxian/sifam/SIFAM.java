@@ -36,6 +36,7 @@ public class SIFAM extends Application {
     public static boolean NO_DELETE_WARNINGS = false;
     public static boolean AUTO_START = true;
     public static boolean FOLDERS_ON_BOTTOM = false;
+    public static boolean SHOW_ACCOUNT_COUNT_FOLDER = true;
     public static SharedPreferences sharedPreferences;
     public static String errorMessage = "";
     public static String fullLog = "";
@@ -228,12 +229,25 @@ public class SIFAM extends Application {
         SIFAM.log("Initiating SIFAM " + BuildConfig.VERSION_NAME + " (" + BuildConfig.VERSION_CODE + ")");
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         deviceInformation();
-        serverList.add(new Server("EN", "English", "klb.android.lovelive_en"));
-        serverList.add(new Server("JP", "Japan", "klb.android.lovelive"));
-        serverList.add(new Server("TW", "Taiwan", "net.gamon.loveliveTW"));
-        serverList.add(new Server("KR", "Korea", "com.nhnent.SKLOVELIVE"));
-        serverList.add(new Server("CN", "China", "klb.android.lovelivecn"));
+        serverList.add(new Server("EN", s(R.string.server_name_en), "klb.android.lovelive_en"));
+        serverList.add(new Server("JP", s(R.string.server_name_jp), "klb.android.lovelive"));
+        serverList.add(new Server("TW", s(R.string.server_name_tw), "net.gamon.loveliveTW"));
+        serverList.add(new Server("KR", s(R.string.server_name_kr), "com.nhnent.SKLOVELIVE"));
+        serverList.add(new Server("CN", s(R.string.server_name_cn), "klb.android.lovelivecn"));
         updateSettings();
+    }
+
+    public static String s(int str, Object... args){
+        String output = getContext().getString(str);
+        int i = 0;
+        for (Object arg:args){
+            output = output.replaceAll("%"+i,""+arg);
+            i++;
+        }
+
+        output = output.replaceAll("%\\d+","");
+
+        return output;
     }
 
 }

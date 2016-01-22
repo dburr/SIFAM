@@ -10,6 +10,7 @@ public class Account {
     public boolean locked = false;
     public String userKey;
     public String userPass;
+    public long accountCount;
     public boolean isCurrent() {
         for (Server s : SIFAM.serverList) {
             if (s.code.equals(server)) {
