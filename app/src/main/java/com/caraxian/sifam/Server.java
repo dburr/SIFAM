@@ -178,7 +178,7 @@ public class Server {
 
     public void openApp() {
         SIFAM.log("Server[" + code + "] > openApp");
-        if (SIFAM.CLOSE_BUTTON) {
+        if (SIFAM.CLOSE_BUTTON || SIFAM.OVERLAY_NAME) {
             SIFAM.getContext().startService(new Intent(SIFAM.getContext(), OverlayService.class));
         }
         Intent launchIntent = SIFAM.getContext().getPackageManager().getLaunchIntentForPackage(className);
