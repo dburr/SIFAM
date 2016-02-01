@@ -7,7 +7,7 @@
     android:paddingTop="12dp"
     android:paddingBottom="12dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_no_root" tools:context="com.caraxian.sifam.ErrorDetected">
+    tools:showIn="@layout/activity_error_detected" tools:context="com.caraxian.sifam.ErrorDetected">
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
