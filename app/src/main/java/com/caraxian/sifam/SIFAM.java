@@ -29,6 +29,7 @@ public class SIFAM extends Application {
     public static boolean REVERSE_SORT = false;
     public static boolean CLOSE_BUTTON = false;
     public static boolean OVERLAY_NAME = false;
+    public static boolean OVERLAY_RENAME = false;
     public static boolean ALLOW_DUPLICATE_SAVES = false;
     public static boolean QUICK_SAVE = false;
     public static boolean ALT_QS_NAME = false;
@@ -44,6 +45,8 @@ public class SIFAM extends Application {
     private static Context context;
     static private Process shell = getShell();
     public static String lastLoadedAccountName = "Test Overlay";
+    public static Account lastLoadedAccount = null;
+    public static String pathToCurrentFolder = "";
 
 
     public static Context getContext() {
@@ -116,6 +119,7 @@ public class SIFAM extends Application {
         CLOSE_BUTTON = sharedPreferences.getBoolean("close_button",false);
         OVERLAY_NAME = sharedPreferences.getBoolean("overlay_name",false);
         ALLOW_DUPLICATE_SAVES = sharedPreferences.getBoolean("allow_duplicate_save",false);
+        OVERLAY_RENAME = sharedPreferences.getBoolean("overlay_rename",false);
     }
 
     public static void executeRootCommand(String... command) {

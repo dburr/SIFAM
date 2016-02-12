@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private static Context mContext;
     private final long SEARCH_DELAY = 100;
     public AlertDialog alertDialog;
-    Database db = new Database();
+    static Database db = new Database();
     private Timer searchDelayTimer = new Timer();
     private ListView ACCOUNT_LIST;
     private ArrayList<Account> ACCOUNT_LIST_DATA = new ArrayList<>();
@@ -534,7 +534,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public boolean isSaveNameValid(String s) {
+    public static boolean isSaveNameValid(String s) {
         SIFAM.log("MainActivity.java > isSaveNameValid");
         if (s.length() == 0) return false;
         if (s.length() < 1) return false;
@@ -1064,7 +1064,7 @@ public class MainActivity extends AppCompatActivity {
         getCurrentPage();
     }
 
-    public String getPathToFolder(long folder) {
+    public static String getPathToFolder(long folder) {
         SIFAM.log("MainActivity.java > getPathToFolder(folder)");
         ArrayList<Long> idPath = new ArrayList<>();
         String pathString = "";
@@ -1086,6 +1086,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void startLoadAccount(final Account account) {
         SIFAM.log("MainActivity.java > startLoadAccount > " + account.id + "(" + account.name + ")");
+        SIFAM.lastLoadedAccount = account;
+        SIFAM.pathToCurrentFolder = getPathToFolder(CURRENT_FOLDER);
         SIFAM.lastLoadedAccountName = getPathToFolder(CURRENT_FOLDER) + " > " + account.name;
         if (account.isFolder) {
             changeFolder(account.id);

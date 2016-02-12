@@ -42,7 +42,17 @@ public class AppPreferences extends PreferenceActivity {
         addCheckBox("Allow Duplicate Saves",savingSettings,"allow_duplicate_save",null,"SIFAM won't check for existing save.","SIFAM will check if the current account is already saved before saving.",false,this);
         PreferenceCategory overlaySettings = addCategory("Overlay Settings", screen, "overlay", null, this);
         addCheckBox("Display Close Button",overlaySettings, "close_button", null, "Close button will be displayed in top left of screen after opening SIF.\nPressing this button will close SIF, returning to last open app.","No close button will be displayed.",false,this);
-        addCheckBox("Display Loaded Account",overlaySettings,"overlay_name",null,"Account name will be displayed in top left of screen after opening SIF.\nThis may be useful in screenshots.","When enabled, Account name will be displayed in top left of screen.\nThis may be useful in screenshots.",false,this);
+        final CheckBoxPreference displayName = addCheckBox("Display Loaded Account",overlaySettings,"overlay_name",null,"Account name will be displayed in top left of screen after opening SIF.\nThis may be useful in screenshots.","When enabled, Account name will be displayed in top left of screen.\nThis may be useful in screenshots.",false,this);
+        final CheckBoxPreference displayRename = addCheckBox("Display Rename Button",overlaySettings,"overlay_rename",null,"A button that will allow renaming the currently loaded account will be displayed.","When enabled, A button that will allow renaming the currently loaded account will be displayed.",false,this);
+        displayRename.setEnabled(SIFAM.OVERLAY_NAME);
+        displayName.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                displayRename.setChecked(false);
+                displayRename.setEnabled((Boolean) newValue);
+                return true;
+            }
+        });
         PreferenceCategory enabledServers = addCategory("Enabled Servers", screen, "enabled", null, this);
         for (Server s : SIFAM.serverList) {
             String extraMessage = "";
