@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
                         builder.create().show();
                     } else {
-                        createBlankAccount(saveServers.get(0));
+                        deleteCurrentAccount(saveServers.get(0));
                     }
                 } else {
                     SIFAM.Toast("No Servers Enabled");
