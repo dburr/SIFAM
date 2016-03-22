@@ -17,7 +17,50 @@ public class AppPreferences extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(this);
+        PreferenceCategory main = addCategory("SIFAM Settings", screen, "main", null, this);
+        PreferenceScreen serversScreen = addScreen("Server Settings", main);
+        PreferenceCategory enabledServers = addCategory("Server Settings", serversScreen, "enabled", null, this);
+        PreferenceScreen overlayScreen = addScreen("Overlay Settings", main);
+        PreferenceCategory overlaySettings = addCategory("Overlay Settings", overlayScreen, "overlay", null, this);
+        PreferenceCategory overlaySettings2 = addCategory("Enabled Overlays",overlayScreen,"enabled",null,this);
+        PreferenceScreen saveLoadScreen = addScreen("Save & Load Settings", main);
+        PreferenceCategory savingSettings = addCategory("Save & Load Settings", saveLoadScreen, "saving", null, this);
         PreferenceCategory generalSettings = addCategory("General Settings", screen, "general", null, this);
+
+        //Server Settings
+        for (Server s : SIFAM.serverList) {
+            String extraMessage = "";
+            if (s.installed == false) {
+                extraMessage = "\nThis version of School Idol Festival is not installed!";
+            }
+            CheckBoxPreference c = addCheckBox(s.name, enabledServers, s.code, null, "Accounts from this server will be displayed." + extraMessage, "Accounts from this server will not be displayed." + extraMessage, false, this);
+            if (s.installed == false) {
+                c.setChecked(false);
+                c.setEnabled(false);
+            }
+        }
+
+        //Overlay Settings
+        addCheckBox("Enable Overlay", overlaySettings, "enable_overlay", null, "Enabled Overlays will be displayed", "No overlays will be displayed", false, this);
+        final CheckBoxPreference overlayClose = addCheckBox("Close Button", overlaySettings2, "close_button", null, "Will show button to return to SIFAM", "Adds button to return to SIFAM", false, this);
+        final CheckBoxPreference overlayName = addCheckBox("Display Account Name", overlaySettings2, "overlay_name", null, "Will show account name on overlay","Adds account name to the overlay", false, this);
+        final CheckBoxPreference overlayRename = addCheckBox("Display Rename Button", overlaySettings2, "overlay_rename", null, "Will show button to rename loaded account", "Adds button to rename loaded account", false, this);
+        overlayName.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener(){
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                overlayRename.setChecked(false);
+                overlayRename.setEnabled((Boolean) newValue);
+                return true;
+            }
+        });
+
+        //Save & Load Settings
+        addCheckBox("Quick Save", savingSettings, "quick_save", null, "Account will use the current time as a name.", "Account will ask for name before saving.", false, this);
+        addCheckBox("Alternate QS Name", savingSettings,"alternate_qs",null,"Will use numbers for account name.","Will use data/time for account name.",false,this);
+        addCheckBox("Auto Start SIF", savingSettings, "auto_start", null, "SIF will launch as soon as account has been loaded.", "SIF will not open after an account has been loaded.", true, this);
+        addCheckBox("Allow Duplicate Saves", savingSettings, "allow_duplicate_save", null, "SIFAM won't check for existing save.", "SIFAM will check if the current account is already saved before saving.", false, this);
+
+        //General Settings
         addCheckBox("Folders on Bottom", generalSettings, "folders_on_bottom", null, "Folders will be under accounts in the list.", "Folders will be above accounts in the list.", false, this);
         CheckBoxPreference noWarnings = addCheckBox("Disable Warnings and Alerts", generalSettings, "no_warnings", null,
                 "No alerts or confirmations will be displayed when performing actions.\nThis feature is intended to be used with macros and should not be used with your main accounts.",
@@ -35,37 +78,8 @@ public class AppPreferences extends PreferenceActivity {
                 return true;
             }
         });
-        PreferenceCategory savingSettings = addCategory("Save & Load Options", screen, "saving", null, this);
-        addCheckBox("Quick Save", savingSettings, "quick_save", null, "Account will use the current time as a name.", "Account will ask for name before saving.", false, this);
-        addCheckBox("Alternate QS Name", savingSettings,"alternate_qs",null,"Will use numbers for account name.","Will use data/time for account name.",false,this);
-        addCheckBox("Auto Start SIF", savingSettings, "auto_start", null, "SIF will launch as soon as account has been loaded.", "SIF will not open after an account has been loaded.", true, this);
-        addCheckBox("Allow Duplicate Saves",savingSettings,"allow_duplicate_save",null,"SIFAM won't check for existing save.","SIFAM will check if the current account is already saved before saving.",false,this);
-        PreferenceCategory overlaySettings = addCategory("Overlay Settings", screen, "overlay", null, this);
-        addCheckBox("Display Close Button",overlaySettings, "close_button", null, "Close button will be displayed in top left of screen after opening SIF.\nPressing this button will close SIF, returning to last open app.","No close button will be displayed.",false,this);
-        final CheckBoxPreference displayName = addCheckBox("Display Loaded Account",overlaySettings,"overlay_name",null,"Account name will be displayed in top left of screen after opening SIF.\nThis may be useful in screenshots.","When enabled, Account name will be displayed in top left of screen.\nThis may be useful in screenshots.",false,this);
-        final CheckBoxPreference displayRename = addCheckBox("Display Rename Button",overlaySettings,"overlay_rename",null,"A button that will allow renaming the currently loaded account will be displayed.","When enabled, A button that will allow renaming the currently loaded account will be displayed.",false,this);
-        displayRename.setEnabled(SIFAM.OVERLAY_NAME);
-        displayName.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                displayRename.setChecked(false);
-                displayRename.setEnabled((Boolean) newValue);
-                return true;
-            }
-        });
-        PreferenceCategory enabledServers = addCategory("Enabled Servers", screen, "enabled", null, this);
-        for (Server s : SIFAM.serverList) {
-            String extraMessage = "";
-            if (s.installed == false) {
-                extraMessage = "\nThis version of School Idol Festival is not installed!";
-            }
-            CheckBoxPreference c = addCheckBox(s.name, enabledServers, s.code, null, "Accounts from this server will be displayed." + extraMessage, "Accounts from this server will not be displayed." + extraMessage, false, this);
-            if (s.installed == false) {
-                c.setChecked(false);
-                c.setEnabled(false);
-            }
-            ;
-        }
+
+
         setPreferenceScreen(screen);
     }
 
@@ -99,40 +113,14 @@ public class AppPreferences extends PreferenceActivity {
         return c;
     }
 
-    private SwitchPreference addSwitch(String title, PreferenceCategory category, String key, Drawable icon, String onText, String offText, String onLabel, String offLabel, boolean defaultValue, Context context) {
-        SwitchPreference c = new SwitchPreference(context);
-        c.setTitle(title);
-        c.setKey(key);
-        c.setSwitchTextOn(onLabel);
-        c.setSwitchTextOff(offLabel);
-        if (null != icon) c.setIcon(icon);
-        if (offText.equals(null) || onText.equals(null)) {
-            if (offText.equals(null)) {
-                c.setSummary(onText);
-            } else if (onText.equals(null)) {
-                c.setSummary(offText);
-            }
-        } else {
-            c.setSummaryOn(onText);
-            c.setSummaryOff(offText);
+    private PreferenceScreen addScreen(String title, Preference parent){
+        PreferenceScreen s = getPreferenceManager().createPreferenceScreen(this);
+        s.setTitle(title);
+        if (parent instanceof PreferenceScreen){
+          ((PreferenceScreen) parent).addPreference(s);
+        }else if (parent instanceof PreferenceCategory){
+            ((PreferenceCategory) parent).addPreference(s);
         }
-        c.setDefaultValue(defaultValue);
-        c.setChecked(SIFAM.sharedPreferences.getBoolean(key, defaultValue));
-        category.addPreference(c);
-        return c;
-    }
-
-    private EditTextPreference addEditText(String title, PreferenceCategory category, String key, Drawable icon, String summary, boolean number, Object defaultValue, Context context) {
-        EditTextPreference c = new EditTextPreference(context);
-        c.setTitle(title);
-        c.setKey(key);
-        c.setDefaultValue(defaultValue.toString());
-        c.setSummary(summary);
-        if (null != icon) c.setIcon(icon);
-        if (number) {
-            c.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-        }
-        category.addPreference(c);
-        return c;
+        return s;
     }
 }
