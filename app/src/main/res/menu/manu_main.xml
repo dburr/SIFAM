@@ -43,5 +43,8 @@
     <item android:id="@+id/menu_qr"
         android:title="@string/menu_qr"
         app:showAsAction="never"/>
+    <item android:id="@+id/menu_debug"
+        android:title="@string/menu_debug"
+        app:showAsAction="never"/>
 
 </menu>

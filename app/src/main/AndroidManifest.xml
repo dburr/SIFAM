@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.caraxian.sifam">
+    package="com.caraxian.sifam" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -12,10 +12,10 @@
         android:icon="@mipmap/launcher_maki"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,10 +26,8 @@
         <activity android:name=".AppPreferences" />
         <activity android:name=".ImportAccounts" />
         <activity android:name=".ExportAccounts" />
-
-        <service android:name=".OverlayService"></service>
-
-
+        <activity android:name=".DebugTools" />
+        <service android:name=".OverlayService" />
     </application>
 
 </manifest>

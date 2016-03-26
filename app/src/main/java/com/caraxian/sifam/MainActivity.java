@@ -6,7 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +25,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -207,6 +211,9 @@ public class MainActivity extends AppCompatActivity {
                 scanIntegrator.initiateScan();
                 return true;
             }
+            case R.id.menu_debug: {
+                startActivity(new Intent(this, DebugTools.class));
+            }
             default: {
                 return super.onOptionsItemSelected(item);
             }
@@ -223,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 String scanFormat = scanningResult.getFormatName();
                 if (scanContent.startsWith("SIFAM:")) {
                     if (scanContent.startsWith("SIFAM:1:")) {
-                        //QR Format from 0.8.0+
+                        //QR Format from first introduction
                         String[] split = scanContent.split(":");
                         if (split.length == 6) {
                             String name = split[2];
@@ -283,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 final Runnable deleteConfirm = new Runnable() {
                     @Override
                     public void run() {
-                        final AlertDialog.Builder confirmDelete = new AlertDialog.Builder(mContext);
+                        final AlertDialog.Builder confirmDelete = new AlertDialog.Builder(MainActivity.this);
                         confirmDelete.setTitle("Delete Account");
                         confirmDelete.setMessage("Do you really want to delete the GameEngineActivity file?\nIt doesn't appear to be saved.");
                         confirmDelete.setIcon(android.R.drawable.ic_dialog_alert);
@@ -336,8 +343,41 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Account currentUser = db.findAccountByUser(server.currentUser, server.code);
                 if (currentUser == null && SIFAM.NO_WARNINGS == false) {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("Create New Account").
+                            setMessage("Are you sure you want to create a new account? Your current account is not saved!").
+                            setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                }
+                            }).
+                            setPositiveButton("Delete the unsaved account.", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            builder.setNegativeButton("I know what I'm doing.\nDelete the unsaved account.", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    server.forceCloseApp();
+                                                    if (server.writeToGameEngineActivity(0, "", "")) {
+                                                        SIFAM.Toast("Starting new account.");
+                                                        SIFAM.delayAction(new Runnable() {
+                                                            public void run() {
+                                                                server.openApp();
+                                                            }
+                                                        }, 1500);
+                                                    } else {
+                                                        SIFAM.log("Failed to write");
+                                                        SIFAM.Toast("Failed");
+                                                    }
+                                                }
+                                            }).setPositiveButton("Cancel\nDon't delete my account.", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {}
+                                            }).setMessage("Are you sure you want to create a new account? Your current account is not saved!\n\n110% sure?");
+                                            builder.show();
+                                        }
+                                    }
+                            );
                     SIFAM.log("Not Saved!");
-                    SIFAM.Toast("Current Account not Saved!");
+                    alertDialog = builder.show();
                 } else {
                     if (SIFAM.NO_WARNINGS == true || currentUser.userPass.equals(server.currentPass)) {
                         SIFAM.log("UserPass Match");
@@ -901,21 +941,37 @@ public class MainActivity extends AppCompatActivity {
                 db.deleteAccount(account);
                 getCurrentPage();
             } else {
+                final CheckBox alsoDeleteCurrent = new CheckBox(this);
+                alsoDeleteCurrent.setText("Also Delete Current GameEngineActivity [" + account.server + "]");
                 final AlertDialog.Builder confirmDelete = new AlertDialog.Builder(this);
                 confirmDelete.setTitle("Delete Account");
                 confirmDelete.setMessage("Do you really want to delete '" + account.name + "' on " + account.server + "?");
                 confirmDelete.setIcon(android.R.drawable.ic_dialog_alert);
+                if (account.isCurrent()) {
+                    confirmDelete.setView(alsoDeleteCurrent);
+                }
                 confirmDelete.setPositiveButton("Delete It!", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        confirmDelete.setMessage("Absolutely Sure? Delete '" + account.name + "' on " + account.server + "?");
-                        confirmDelete.setPositiveButton("Keep It", null);
-                        confirmDelete.setNegativeButton("Delete It!", new DialogInterface.OnClickListener() {
+                        final AlertDialog.Builder confirmDelete2 = new AlertDialog.Builder(MainActivity.this);
+                        final CheckBox alsoDeleteCurrent2 = new CheckBox(MainActivity.this);
+                        alsoDeleteCurrent2.setText("Also Delete Current GameEngineActivity [" + account.server + "]");
+                        confirmDelete2.setTitle("Delete Account");
+                        if (account.isCurrent() && alsoDeleteCurrent.isChecked()) {
+                            alsoDeleteCurrent2.setChecked(true);
+                            confirmDelete2.setView(alsoDeleteCurrent2);
+                        }
+                        confirmDelete2.setMessage("Absolutely Sure? Delete '" + account.name + "' on " + account.server + "?");
+                        confirmDelete2.setPositiveButton("Keep It", null);
+                        confirmDelete2.setNegativeButton("Delete It!", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 db.deleteAccount(account);
+                                if (alsoDeleteCurrent.isChecked() && alsoDeleteCurrent2.isChecked() && account.isCurrent()) {
+                                    Server.getServer(account.server).deleteGameEngineActivity();
+                                }
                                 getCurrentPage();
                             }
                         });
-                        confirmDelete.show();
+                        confirmDelete2.show();
                     }
                 });
                 confirmDelete.setNegativeButton("Keep It", null);
@@ -1035,6 +1091,14 @@ public class MainActivity extends AppCompatActivity {
                     bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
                 }
             }
+            Canvas canvas = new Canvas(bmp);
+            Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.launcher_maki);
+            Bitmap maki = Bitmap.createScaledBitmap(icon, 120, 120, true);
+            icon.recycle();
+            Paint paint = new Paint();
+            paint.setAlpha(250);
+            canvas.drawBitmap(maki, (width / 2) - (maki.getWidth() / 2), (height / 2) - (maki.getHeight() / 2), paint);
+            maki.recycle();
             return bmp;
         } catch (WriterException e) {
             SIFAM.log(e);

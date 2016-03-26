@@ -21,6 +21,15 @@ public class Server {
     public File gameEngineActivity;
     public boolean error = false;
 
+    public static Server getServer(String code){
+        for (Server s : SIFAM.serverList){
+            if (s.code.equals(code)){
+                return s;
+            }
+        }
+        return null;
+    }
+    
     public Server(String nCode, String nName, String nClassName) {
         code = nCode;
         name = nName;

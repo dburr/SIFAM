@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class Database {
     private sifam_dbHelper dbHelper = new sifam_dbHelper(SIFAM.getContext());
@@ -144,6 +145,24 @@ public final class Database {
         return newRowId;
     }
 
+    public long findFolder(String name, long parentFolder){
+        SIFAM.log("Database > findFolder");
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] columns = {Folders._ID};
+        String selection = Folders.cName + "=? AND " + Folders.cParent + "=?";
+        String[] selectionArgs = {name, "" + parentFolder};
+        Cursor c = db.query(Folders.tName, columns, selection, selectionArgs, null, null, null);
+        try {
+            c.moveToFirst();
+            long fId = c.getLong(0);
+            c.close();
+            db.close();
+            return fId;
+        }catch(Exception e){
+            return -1;
+        }
+    }
+
     public ArrayList<Account> getFolders(long folder) {
         SIFAM.log("Database > getFolders");
         ArrayList<Account> folders = new ArrayList<Account>();
@@ -183,6 +202,25 @@ public final class Database {
         return folders;
     }
 
+    public ArrayList<Account> getAllFolders() {
+        ArrayList<Account> list = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c = db.query(Folders.tName, null, null, null, null, null, null);
+
+        if (c.moveToFirst()) {
+            while (c.isAfterLast() == false) {
+                Account f = new Account();
+                f.isFolder = true;
+                f.id = c.getLong(c.getColumnIndex(Folders._ID));
+                f.parentFolder = c.getLong(c.getColumnIndex(Folders.cParent));
+                f.name = c.getString(c.getColumnIndex(Folders.cName));
+                list.add(f);
+                c.moveToNext();
+            }
+        }
+        return list;
+    }
+
     public ArrayList<Account> getAccounts(long folder, Integer limit, Integer offset, String sortby, boolean reverse, String search, boolean searchAll) {
         SIFAM.log("Database > getAccounts");
         ArrayList<Account> accountList = new ArrayList<>();
@@ -219,7 +257,10 @@ public final class Database {
             selection += Accounts.cName + " LIKE ?";
             selectionArgs.add("%" + search + "%");
         }
-        String limitStr = offset + "," + limit;
+        String limitStr = null;
+        if (limit != null && offset != null) {
+            limitStr = offset + "," + limit;
+        }
         if (sortby.equals("")) {
             sortby = "name";
         }
@@ -248,7 +289,7 @@ public final class Database {
                     }
                     a.userKey = c.getString(c.getColumnIndex(Accounts.cUser));
                     a.userPass = c.getString(c.getColumnIndex(Accounts.cPass));
-
+                    a.parentFolder = c.getLong(c.getColumnIndex(Accounts.cFolder));
                     if (a.userKey.length() > 0) {
                         accountList.add(a);
                     } else {

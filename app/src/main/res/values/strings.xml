@@ -21,5 +21,6 @@
 	<string name="menu_import">Import Accounts</string>
 	<string name="menu_backup">Backup Management</string>
 	<string name="menu_qr">Scan QR</string>
+	<string name="menu_debug">Debug Tools</string>
 
 </resources>
