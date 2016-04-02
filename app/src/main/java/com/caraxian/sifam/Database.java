@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class Database {
     private sifam_dbHelper dbHelper = new sifam_dbHelper(SIFAM.getContext());

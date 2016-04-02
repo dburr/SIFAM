@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -112,17 +113,37 @@ public class ExportAccounts extends AppCompatActivity {
 
     public void restoreAccounts(BackupDatabase restoreDB, Database mainDB, long old_folder, long new_folder){
         ArrayList<Account> accounts = restoreDB.getAccounts(old_folder);
+        int i = 0;
+        final int aC = accounts.size();
         for (Account a : accounts){
+            i++;
+            final int aR = i;
             mainDB.saveNewAccount(a.name,a.userKey,a.userPass,a.server,new_folder);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((TextView)findViewById(R.id.restoreProgress_A)).setText("Accounts Retrieved: " + aR + "/" + aC);
+                }
+            });
         }
     }
 
     public void restoreFolders(BackupDatabase restoreDB, Database mainDB,long id,long newid){
         ArrayList<Account> folders = restoreDB.getFolders(id);
+        int i = 0;
+        final int fC = folders.size();
         for (Account f : folders){
+            i++;
+            final int fR = i;
             RestoreFolder r = new RestoreFolder(f.id,mainDB.createFolder(f.name, newid));
             restoreAccounts(restoreDB,mainDB,r.originalID,r.newID);
-            restoreFolders(restoreDB,mainDB,r.originalID,r.newID);
+            restoreFolders(restoreDB, mainDB, r.originalID, r.newID);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((TextView) findViewById(R.id.restoreProgress_F)).setText("Folders Retrieved: " + fR + "/" + fC);
+                }
+            });
         }
     }
 
@@ -160,7 +181,7 @@ public class ExportAccounts extends AppCompatActivity {
                         }
                     }
                 });
-                restoreThread.run();
+                restoreThread.start();
             SIFAM.Toast("Started Restore");
         }else{
             SIFAM.Toast("No backup selected");
