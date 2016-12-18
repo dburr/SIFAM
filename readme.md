@@ -1,8 +1,8 @@
+# Abandoned
+I am no longer working on SIFAM and have no plans to continue it. If someone wants to take over they can
+
 # SIFAM
 SchoolIdolFestival Account Manager (SIFAM) is a simple tool for android devices for managing multiple School Idol Festival accounts.
-
-## Download
-Releases by me can be found at my website. http://caraxian.com/android/SIFAM
 
 ### Editing with Android Studio
 1. Create new project selecting "Add No Activity" when prompted.
